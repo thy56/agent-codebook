@@ -18,6 +18,17 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
+
+
+def _write_text(path, text: str) -> None:
+    """写文本文件（UTF-8、LF）。
+
+    用 `open()` 而不是 `Path.write_text(newline=...)`：后者是 Python 3.10 才
+    有的参数，3.9 会抛 `TypeError`，而本项目声明的下限是 3.9。
+    """
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(text)
+
 # ── §5.2 列定义 ──
 # `term` 处的规范冲突：§5.2 把它列为「必填」，§8.1 却把「字典缺少 term 列」
 # 定为**警告** `LX-W004`。本实现按 §8.1（机器可校验口径）处理为警告，
@@ -492,7 +503,7 @@ def dump(lexicon: Lexicon) -> str:
 
 def save(lexicon: Lexicon, path: "str | Path") -> None:
     """写入字典文件（UTF-8、LF，§5.1）。"""
-    Path(path).write_text(dump(lexicon), encoding="utf-8", newline="\n")
+    _write_text(path, dump(lexicon))
 
 
 def compare_rev(old: Lexicon, new: Lexicon) -> List[Diagnostic]:

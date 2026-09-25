@@ -46,6 +46,17 @@ if str(SRC) not in sys.path:
 import decode as D              # noqa: E402  （§9.1 六步展开 / §9.2 成功判据）
 import lexicon as LX           # noqa: E402  （§5.1 TSV 读写）
 
+
+
+def _write_text(path, text: str) -> None:
+    """写文本文件（UTF-8、LF）。
+
+    用 `open()` 而不是 `Path.write_text(newline=...)`：后者是 Python 3.10 才
+    有的参数，3.9 会抛 `TypeError`，而本项目声明的下限是 3.9。
+    """
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(text)
+
 __all__ = ["FileResult", "BenchResult", "run_benchmark", "collect_files",
            "build_stream"]
 
@@ -205,8 +216,7 @@ def run_benchmark(
     base = Path(tmp_ctx.name) if own_tmp else Path(str(tmp_dir))
     try:
         lex_copy = base / "lexicon.tsv"
-        lex_copy.write_text(dict_path.read_text(encoding="utf-8"),
-                            encoding="utf-8", newline="\n")
+        _write_text(lex_copy, dict_path.read_text(encoding="utf-8"))
         for i, path in enumerate(files):
             item = _bench_one(path, table, lexicon, base, lex_copy, i)
             res.files.append(item)
@@ -259,8 +269,7 @@ def _bench_one(path: Path, table: Sequence[Tuple[str, str]], lexicon: LX.Lexicon
         return item
 
     stream_path = base / f"stream_{index:03d}.lx"
-    stream_path.write_text(build_stream(codes, lex_copy.name),
-                           encoding="utf-8", newline="\n")
+    _write_text(stream_path, build_stream(codes, lex_copy.name))
     try:
         exp = D.expand_file(stream_path, lex_copy)
     except D.DecodeError as exc:

@@ -24,6 +24,17 @@ from validate import (
     validate,
 )
 
+
+
+def _write_text(path, text: str) -> None:
+    """写文本文件（UTF-8、LF）。
+
+    用 `open()` 而不是 `Path.write_text(newline=...)`：后者是 Python 3.10 才
+    有的参数，3.9 会抛 `TypeError`，而本项目声明的下限是 3.9。
+    """
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(text)
+
 __all__ = [
     "EncodeError", "Unit", "EncodeResult", "encode", "build_header",
     "render_document", "dictionary_text", "save_dictionary",
@@ -403,4 +414,4 @@ def dictionary_text(lexicon: Lexicon, *, columns: Optional[Sequence[str]] = None
 
 def save_dictionary(lexicon: Lexicon, path: "str | Path") -> None:
     """写字典文件（UTF-8、LF，§5.1）。"""
-    Path(path).write_text(dictionary_text(lexicon), encoding="utf-8", newline="\n")
+    _write_text(path, dictionary_text(lexicon))

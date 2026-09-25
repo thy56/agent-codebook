@@ -59,6 +59,17 @@ if str(TOOLS) not in sys.path:
 import benchmark as BENCH      # noqa: E402
 import lexicon_audit as AUD    # noqa: E402
 
+
+
+def _write_text(path, text: str) -> None:
+    """写文本文件（UTF-8、LF）。
+
+    用 `open()` 而不是 `Path.write_text(newline=...)`：后者是 Python 3.10 才
+    有的参数，3.9 会抛 `TypeError`，而本项目声明的下限是 3.9。
+    """
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(text)
+
 VERBOSE = "-v" in sys.argv
 ONLY = next((a for a in sys.argv[1:] if not a.startswith("-")), "")
 
@@ -1457,8 +1468,7 @@ def test_audit_self_test_and_exit_code() -> None:
         root = Path(tmp)
         bad = root / "bad.tsv"
         # term 为空 → R2 FAIL → 退出码必须为 1
-        bad.write_text(AUDIT_HEADER + "\n" + "AAA\t\t含义甲\t.~\tp.md\t\t\trev-a\n",
-                       encoding="utf-8", newline="\n")
+        _write_text(bad, AUDIT_HEADER + "\n" + "AAA\t\t含义甲\t.~\tp.md\t\t\trev-a\n")
         proc_bad = subprocess.run(
             [sys.executable, str(TOOLS / "lexicon_audit.py"), str(bad)],
             capture_output=True, text=True, encoding="utf-8")
@@ -1467,9 +1477,8 @@ def test_audit_self_test_and_exit_code() -> None:
         require("FAIL" in proc_bad.stdout, f"输出应含 FAIL 判据行：{proc_bad.stdout[-300:]}")
 
         good = root / "good.tsv"
-        good.write_text(AUDIT_HEADER + "\n"
-                        "CMPR\tCompression\t压缩的完整说明含义\t.~\tp.md\t\t\trev-a\n",
-                        encoding="utf-8", newline="\n")
+        _write_text(good, AUDIT_HEADER + "\n"
+                     "CMPR\tCompression\t压缩的完整说明含义\t.~\tp.md\t\t\trev-a\n")
         proc_ok = subprocess.run(
             [sys.executable, str(TOOLS / "lexicon_audit.py"), str(good)],
             capture_output=True, text=True, encoding="utf-8")
@@ -1498,16 +1507,15 @@ def test_benchmark_multi_file() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
         lex = root / "lexicon.tsv"
-        lex.write_text(AUDIT_HEADER + "\n"
-                       "CMP\tCompression\t压缩的完整说明含义\t.~\tp.md\t\t\trev-a\n"
-                       "PRM\tCompactPrompt\t同源工作的完整说明含义\t.~\tp.md\t\t\trev-b\n",
-                       encoding="utf-8", newline="\n")
+        _write_text(lex, AUDIT_HEADER + "\n"
+                    "CMP\tCompression\t压缩的完整说明含义\t.~\tp.md\t\t\trev-a\n"
+                    "PRM\tCompactPrompt\t同源工作的完整说明含义\t.~\tp.md\t\t\trev-b\n")
         inputs = []
         for name, body in (("a.md", "Compression 压缩的完整说明含义" * 5),
                            ("b.md", "CompactPrompt 同源工作的完整说明含义" * 5),
                            ("c.md", "这里没有任何命中概念，只有普通文本。" * 5)):
             p = root / name
-            p.write_text(body, encoding="utf-8", newline="\n")
+            _write_text(p, body)
             inputs.append(str(p))
 
         res = BENCH.run_benchmark(inputs, lex, max_files=50)
