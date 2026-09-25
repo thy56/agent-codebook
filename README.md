@@ -1,5 +1,6 @@
 # 字典压缩法 · Dictionary Compression for Agent Memory
 
+![CI](https://github.com/thy56/agent-codebook/actions/workflows/ci.yml/badge.svg)
 ![tests](https://img.shields.io/badge/tests-43%2F43%20passing-brightgreen)
 ![dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)
 ![python](https://img.shields.io/badge/python-3.9%2B-blue)
@@ -131,8 +132,8 @@ python tests/run_tests.py        # 43/43 通过，退出码 0
 | [`docs/05_引索符系统规范.md`](docs/05_引索符系统规范.md) | ⭐ **核心规范**：20 符符号表 · EBNF 形式语法 · 12 错误码 + 5 警告码 · 13 条校验规则 · 三条不变量 |
 | [`docs/06_负例库.md`](docs/06_负例库.md) | ⭐ **45 项真实缺陷**整理的反例（含「规定了但做不到」类），实现者对照自检 |
 | [`docs/01`](docs/01_设计思路.md) ~ [`04`](docs/04_三级概括法规范.md) | 设计思路 · 调研报告 · 失效模式 · 三级概括法规范 |
-| [`src/`](src) | **参考实现**（零第三方依赖，2,460 行）：字典层 / 解析校验 / 展开 / 编码 |
-| [`tests/`](tests) | `run_tests.py`（43 项）· 黄金向量（11 正例 + 16 反例 + 43 条反例）· 测试报告 |
+| [`src/`](src) | **参考实现**（零第三方依赖，约 2,460 行）：字典层 / 解析校验 / 展开 / 编码 |
+| [`tests/`](tests) | `run_tests.py`（43 项）· `golden.json`（11 正例 + 16 反例，逐条真跑）· `positives.json` 12 例 / `negatives.json` 43 例 · 测试报告 |
 | [`tools/lexicon_audit.py`](tools/lexicon_audit.py) | ⭐ **字典审计**：R1~R6 六项机器判据（膨胀 / 不可读 / 漂移 / 收益 / 悖论 / 语义），`--self-test` 自证 |
 | [`tools/benchmark.py`](tools/benchmark.py) | ⭐ **多文件基准**：R7 对照实验 —— 逐文件基线 / 常驻 / 比值 + 往返完整性真跑 |
 | [`tools/`](tools) | 三级概括法工具链：文本 / 代码 / 日志三域 + 独立往返复核 + 字典可达性检查 |

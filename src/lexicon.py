@@ -130,7 +130,7 @@ def escape_field(value: str, *, is_match: bool = False) -> str:
 
     实现在**单遍**中完成：先判别名分隔符，再做转义表映射。
     若先替换 `;` 再跑转义表，新引入的反斜杠会被二次转义，
-    使 `\;` 变成 `\\;` —— 该缺陷由 `test_escaping_roundtrip` 捕获。
+    使 `\\;` 变成 `\\\\;` —— 该缺陷由 `test_escaping_roundtrip` 捕获。
     """
     out: List[str] = []
     for ch in value:

@@ -643,7 +643,7 @@ def test_escaping_roundtrip() -> None:
     one = LX.split_aliases(LX.escape_field("a;b", is_match=True))   # 一个含 `;` 的别名
     require(one == ("a;b",),
             f"`\\;` 应还原为字面 `;` 且不切分，实为 {one}")
-    mixed = LX.split_aliases("禁止强制终止\;x")
+    mixed = LX.split_aliases("禁止强制终止\\;x")
     require(mixed == ("禁止强制终止;x",),
             f"转义分号应还原为字面 `;` 且不切分，实为 {mixed}")
     # 写入 → 读回闭环：两个别名往返不变
