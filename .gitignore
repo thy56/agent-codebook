@@ -1,0 +1,43 @@
+# ── 字典压缩法 · 防误提交基线 ──
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# 产物 / 导出
+dist/
+build/
+out/
+*.log
+
+# 临时 / 草稿（`_*` 会误伤 docs/_archive/，故显式豁免 —— 它是**已发布内容**，非草稿）
+_*
+!docs/_archive/
+!docs/_archive/**
+tmp/
+*.tmp
+*.bak
+*.bak-*
+*.bak_*
+*.orig
+
+# 本地实验（不纳入版本）
+local/
+scratch/
+
+# 临时提交信息文件（不得入库）
+.COMMIT_MSG

@@ -1,0 +1,4 @@
+code	term	meaning	fidelity	detail_path	match	loss
+R1	红线1	绝不用 taskkill /F 强杀网关（跳过 WAL）	.~	docs/rules.md	绝不用taskkill	
+R2	红线2	绝不设 ALLOW_MULTI_GATEWAY（抢端口）	.~	docs/rules.md	绝不设ALLOW_MULTI	
+R3	红线3	重启用 gateway restart，勿 stop+start	.~	docs/rules.md	重启用gateway	

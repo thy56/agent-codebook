@@ -1,0 +1,457 @@
+[
+  {
+    "name": "关系符连写 @R1>&@R2（被静默误读为 `@R1 > 字面量 &@R2`）",
+    "ref": "06 A-② / L-7 / F-6",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@R1>&@R2;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "关系符连写 @R1||&@R2",
+    "ref": "L-7 / F-6",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@R1||&@R2;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "结尾悬空关系符 @R1>（右侧缺原子）",
+    "ref": "L-7",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@R1>;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "裸代号 RL-3（形状合法，须靠字典才能发现）",
+    "ref": "§4.2 / §8.2 V-08 / 06 A + §8.4「语法层拦不住」",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-! fid=yes\nRL-3;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E008"
+    ]
+  },
+  {
+    "name": "裸代号 R1",
+    "ref": "§4.2 / P-3 / V-08",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\nR1;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E008"
+    ]
+  },
+  {
+    "name": "路径被转义 @R1>\"mem\\/rules\\/rl.md\"（/ 不是关系符，无需转义）",
+    "ref": "06 A-③ / §4.4",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@R1>\"mem\\/rules\\/rl.md\";;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "含空格未界定 @R1>taskkill /F",
+    "ref": "06 A-④ / L-6 / F-3",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@R1>taskkill /F;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "保真度写成 . ! （中间多一空格）",
+    "ref": "06 A-⑤ / G-7 / F-11",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n-@R1. !;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "数字开头 + 含冒号（D-2 排除键值，但 `:` 不在 safe-char 内）",
+    "ref": "§3.5 D-2 / 06 F-4 —— §3.1 与 §3.5 的缺口，见交付报告③",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@R1>127.0.0.1:5432;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "小写起始代号 @r1",
+    "ref": "§3.2 L-3 / §6.1 非法例",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@r1;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "尾部连字符 @R-",
+    "ref": "§6.1 非法例 / 06 R4-2",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@R-;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "下划线起始 @_R1",
+    "ref": "§6.1 非法例",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@_R1;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "头部缺少 dict",
+    "ref": "§3.3 / §8.2 V-01 / §8.4（语法层拦不住）",
+    "kind": "validate",
+    "stream": "#LX1 mods=-!\n-@R1|-@R2|-@R3\n;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E001"
+    ]
+  },
+  {
+    "name": "头部超过 120 字符",
+    "ref": "§3.3 / V-01",
+    "kind": "validate",
+    "stream": "#LX1 dict=dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd mods=-!\n@R1;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E001"
+    ]
+  },
+  {
+    "name": "符号串内出现非 ASCII（界定字面量之外）",
+    "ref": "§3.2 L-1 / V-05 / 06 F-10",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@R1>网关;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "头部版本号不受支持 #LX2",
+    "ref": "§13 E-3 / §8.2 V-13",
+    "kind": "validate",
+    "stream": "#LX2 dict=lexicon.tsv mods=-!\n@R1;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E012"
+    ]
+  },
+  {
+    "name": "使用未在 mods 声明的模态符 `-`（头部 mods 为空）",
+    "ref": "§3.3 / §8.1 LX-E006 / 06 G-1",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv\n-@R1;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E006"
+    ]
+  },
+  {
+    "name": "^R5 早于 @R5（复用了从未展开的代号）",
+    "ref": "§4.2 / §9.1 步4 / V-11 / 06 G-5",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-! fid=yes\n^R1>@R1;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E011"
+    ]
+  },
+  {
+    "name": "^R5 早于 @R5 —— 展开层直判（§9.1 步4）",
+    "ref": "§9.1 步4 / LX-E011",
+    "kind": "decode",
+    "stream": "#LX1 dict=lexicon.tsv mods=-! fid=yes\n^R1>@R1;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E011"
+    ]
+  },
+  {
+    "name": "悬空引用 @ZZ9（字典中不存在）",
+    "ref": "INV-3 / §8.1 LX-E002 / ND-2",
+    "kind": "validate",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@ZZ9;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E002"
+    ]
+  },
+  {
+    "name": "悬空引用 @ZZ9 —— 展开层直判（禁止跳过）",
+    "ref": "§9.3 ND-2",
+    "kind": "decode",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@ZZ9;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E002"
+    ]
+  },
+  {
+    "name": "单元未以 `|` 或 `;;` 终止",
+    "ref": "§3.1 body",
+    "kind": "syntax",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n-@R1",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "结尾是 `|`，`;;` 未闭合",
+    "ref": "§3.1 body",
+    "kind": "syntax",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n-@R1|-@R2|",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "前导空并列项 |@R1;;",
+    "ref": "§3.1 unit（无空项产生式）",
+    "kind": "syntax",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n|@R1;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "界定字面量未闭合 @R1>\"abc",
+    "ref": "§3.4 / §3.1 qliteral",
+    "kind": "syntax",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@R1>\"abc;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "键值缺值 state:",
+    "ref": "§3.1 keyvalue = key2 , \":\" , atom1",
+    "kind": "syntax",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@R1|state:;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E005"
+    ]
+  },
+  {
+    "name": "头部含未知属性",
+    "ref": "§3.3 属性表（dict/mods/ns/fid）",
+    "kind": "syntax",
+    "stream": "#LX1 dict=lexicon.tsv foo=bar mods=-!\n@R1;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E001"
+    ]
+  },
+  {
+    "name": "头部不含 SP，属性黏在版本号上（#LX1dict=…）",
+    "ref": "§3.1 header = \"#LX\", version, { SP, attribute }",
+    "kind": "syntax",
+    "stream": "#LX1dict=lexicon.tsv mods=-!\n@R1;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E001"
+    ]
+  },
+  {
+    "name": "fid 取值非法（fid=no）",
+    "ref": "§3.3（fid 取值仅 `yes`）",
+    "kind": "syntax",
+    "stream": "#LX1 dict=lexicon.tsv mods=-! fid=no\n@R1;;",
+    "lexicon": "shared.lexicon.tsv",
+    "expect": [
+      "LX-E001"
+    ]
+  },
+  {
+    "name": "字典与符号串位于同一文件（违 INV-1）",
+    "ref": "§2.1 INV-1 / §8.2 V-09 / P-1（§8.1 未分配错误码）",
+    "kind": "v09",
+    "expect": [
+      "LX-E013"
+    ]
+  },
+  {
+    "name": "字典列数多于列名行（字段含裸 Tab）",
+    "ref": "§5.1.1 / §8.1 LX-E009 / 06 B-②、F-13（注：06 B-② 把 5 字段的行称作「9 列」，属规范计数错误 —— 见交付报告⑦）",
+    "kind": "lexicon",
+    "rows": [
+      "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss",
+      "R1\t红线\t1\t含义\t.~\tp.md\tx\ty"
+    ],
+    "expect": [
+      "LX-E009"
+    ]
+  },
+  {
+    "name": "字典列数少于列名行",
+    "ref": "§5.1 / §8.1 LX-E010 / 06 B-③",
+    "kind": "lexicon",
+    "rows": [
+      "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss",
+      "R1\t红线1\t含义\t.~\tp.md\t绝不用"
+    ],
+    "expect": [
+      "LX-E010"
+    ]
+  },
+  {
+    "name": "字典字段含裸 CR",
+    "ref": "§5.1.1（须写 \\r）/ LX-E009",
+    "kind": "lexicon",
+    "rows": [
+      "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss",
+      "R1\t红线\r1\t含义\t.~\tp.md\t\t"
+    ],
+    "expect": [
+      "LX-E009"
+    ]
+  },
+  {
+    "name": "字典字段含未知转义 \\x",
+    "ref": "§5.1.1（仅定义 \\t \\n \\r \\\\ \\;）",
+    "kind": "lexicon",
+    "rows": [
+      "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss",
+      "R1\t红线\\x1\t含义\t.~\tp.md\t\t"
+    ],
+    "expect": [
+      "LX-E009"
+    ]
+  },
+  {
+    "name": "代号重复定义",
+    "ref": "§8.1 LX-E004 / INV-2 / 06 B「一概念两代号」",
+    "kind": "lexicon",
+    "rows": [
+      "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss",
+      "R1\t红线1\t含义一\t.~\tp.md\t\t",
+      "R1\t红线1\t含义二\t.~\tp.md\t\t"
+    ],
+    "expect": [
+      "LX-E004"
+    ]
+  },
+  {
+    "name": "字典代号不符合 code 产生式（小写 r1）",
+    "ref": "§3.1 code / §6.1（唯一来源为 §3.1）",
+    "kind": "lexicon",
+    "rows": [
+      "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss",
+      "r1\t红线1\t含义\t.~\tp.md\t\t"
+    ],
+    "expect": [
+      "LX-E010"
+    ]
+  },
+  {
+    "name": "字典 fidelity 取值非法",
+    "ref": "§5.2（仅 .= / .~ / .!）",
+    "kind": "lexicon",
+    "rows": [
+      "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss",
+      "R1\t红线1\t含义\t. !\tp.md\t\t"
+    ],
+    "expect": [
+      "LX-E010"
+    ]
+  },
+  {
+    "name": "字典 fidelity=.! 但 loss 列缺失",
+    "ref": "§5.2 条件必填 / §5.3 / LX-E007 / §9.1 步5",
+    "kind": "lexicon",
+    "rows": [
+      "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss",
+      "R1\t红线1\t含义\t.!\tp.md\t\t"
+    ],
+    "expect": [
+      "LX-E007"
+    ]
+  },
+  {
+    "name": "字典 .! 缺 loss —— 展开层直判（ND-4 / §9.1 步5）",
+    "ref": "§9.1 步5 / §9.3 ND-4 / LX-E007",
+    "kind": "decode_forced",
+    "stream": "#LX1 dict=d.tsv mods=-! fid=yes\n@S1;;",
+    "forced_entries": [
+      {
+        "code": "S1",
+        "term": "状态",
+        "meaning": "含义",
+        "fidelity": ".!",
+        "detail_path": "p.md",
+        "loss": ""
+      }
+    ],
+    "expect": [
+      "LX-E007"
+    ]
+  },
+  {
+    "name": "字典列名带 `#` 前缀（#code）",
+    "ref": "§5.1（列名即字面列名，禁止前缀）/ 06 F-12",
+    "kind": "lexicon",
+    "rows": [
+      "#code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss",
+      "R1\t红线1\t含义\t.~\tp.md\t\t"
+    ],
+    "expect": [
+      "LX-E010"
+    ]
+  },
+  {
+    "name": "字典缺少必填列 term（§5.2 必填 vs §8.1 仅警告 —— 冲突）",
+    "ref": "§5.2（必填）/ §8.1 LX-W004（警告）/ 06 B-④ —— 见交付报告④",
+    "kind": "lexicon_warn",
+    "rows": [
+      "code\tmeaning\tfidelity\tdetail_path\tmatch\tloss",
+      "R1\t含义\t.~\tp.md\t\t"
+    ],
+    "expect": [
+      "LX-W004"
+    ]
+  },
+  {
+    "name": "字典文件不存在（禁止返回空字典）",
+    "ref": "§9.3 ND-1 / LX-E003",
+    "kind": "lexicon_missing",
+    "expect": [
+      "LX-E003"
+    ]
+  },
+  {
+    "name": "字典非法 UTF-8 字节序列",
+    "ref": "§5.1（必须 UTF-8）/ LX-E010",
+    "kind": "lexicon_bytes",
+    "raw_bytes_hex": "636f64650a5231fffe",
+    "expect": [
+      "LX-E010"
+    ]
+  }
+]

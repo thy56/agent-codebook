@@ -1,0 +1,215 @@
+{
+  "_comment": "黄金向量（输入 → 期望输出）。对照 docs/06_负例库.md 构造；每条 case 都必须真跑。",
+  "version": "0.1",
+  "accept": [
+    {
+      "id": "A-01",
+      "desc": "§16 最小示例：3 条规则 → 3 个并列单元 + 收尾 ;;",
+      "stream": "#LX1 dict=lexicon.tsv mods=-!\n-@R1|-@R2|-@R3\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\t红线1\t绝不用 taskkill /F 强杀网关（跳过 WAL）\t.~\tdocs/rules.md\t绝不用taskkill\t\nR2\t红线2\t绝不设 ALLOW_MULTI_GATEWAY（抢端口）\t.~\tdocs/rules.md\t绝不设ALLOW_MULTI\t\nR3\t红线3\t重启用 gateway restart，勿 stop+start\t.~\tdocs/rules.md\t重启用gateway\t\n",
+      "expect_units": 3,
+      "expect_terms": 3,
+      "expect_errors": 0,
+      "expand_contains": [
+        "taskkill",
+        "ALLOW_MULTI_GATEWAY",
+        "gateway restart"
+      ]
+    },
+    {
+      "id": "A-02",
+      "desc": "关系符：导致 / 且（每符两侧各有原子，L-7）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1>@R2&@R3\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\nR2\tr2\tm2\t.=\td.md\t\t\nR3\tr3\tm3\t.=\td.md\t\t\n",
+      "expect_relations": [
+        ">",
+        "&"
+      ],
+      "expect_errors": 0
+    },
+    {
+      "id": "A-03",
+      "desc": "从属 >>（F-8：曾有声明无产生式，此项专测它可用）",
+      "stream": "#LX1 dict=lexicon.tsv\n@M1>>@F1\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nM1\tm1\t模块1\t.=\td.md\t\t\nF1\tf1\t功能1\t.=\td.md\t\t\n",
+      "expect_relations": [
+        ">>"
+      ],
+      "expect_errors": 0
+    },
+    {
+      "id": "A-04",
+      "desc": "模态 + 保真度后缀（.! 须在字典有 loss）",
+      "stream": "#LX1 dict=lexicon.tsv mods=- fid=yes\n-@R1.!\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\t含义1\t.!\td.md\t\t细节\n",
+      "expect_errors": 0,
+      "expect_lossy": true
+    },
+    {
+      "id": "A-05",
+      "desc": "键值原子 state:active（D-1）",
+      "stream": "#LX1 dict=lexicon.tsv\nstate:active\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\n",
+      "expect_errors": 0
+    },
+    {
+      "id": "A-06",
+      "desc": "界定字面量：含空格必须用 \"...\"（L-6 / F-3）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1>\"taskkill /F\"\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\t含义1\t.=\td.md\t\t\n",
+      "expect_errors": 0
+    },
+    {
+      "id": "A-07",
+      "desc": "路径裸写不得转义（F-5：/ 已归还字面量）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1>mem/rules/rl.md\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\t含义1\t.=\td.md\t\t\n",
+      "expect_errors": 0
+    },
+    {
+      "id": "A-08",
+      "desc": "复用引用 ^：先 @ 后 ^（§9.1 步4）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1|^R1\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\t含义1\t.=\td.md\t\t\n",
+      "expect_errors": 0
+    },
+    {
+      "id": "A-09",
+      "desc": "代号连字符后可接数字（R4-1：§3.1 唯一来源）",
+      "stream": "#LX1 dict=lexicon.tsv\n@RL-3\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nRL-3\trl3\t含义\t.=\td.md\t\t\n",
+      "expect_errors": 0
+    },
+    {
+      "id": "A-10",
+      "desc": "多行 body 必须可解析（F-1）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1\n@R2\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\nR2\tr2\tm2\t.=\td.md\t\t\n",
+      "expect_errors": 0
+    },
+    {
+      "id": "A-11",
+      "desc": "并列用单 |，析取用 ||（F-5 / §4.4）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1||@R2\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\nR2\tr2\tm2\t.=\td.md\t\t\n",
+      "expect_relations": [
+        "||"
+      ],
+      "expect_errors": 0
+    }
+  ],
+  "reject": [
+    {
+      "id": "B-01",
+      "desc": "关系符连写 @R1>&@R2（L-7 / F-6）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1>&@R2\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\nR2\tr2\tm2\t.=\td.md\t\t\n",
+      "expect_error": true
+    },
+    {
+      "id": "B-02",
+      "desc": "裸代号（§4.2 / V-08）",
+      "stream": "#LX1 dict=lexicon.tsv\nR1\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\n",
+      "expect_error": true
+    },
+    {
+      "id": "B-03",
+      "desc": "字典字段含裸 Tab → 列数超标（F-13 / LX-E009）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\t红\t线1\t乱\t.~\tp.md\tm\tl\n",
+      "expect_lexicon_error": "LX-E009"
+    },
+    {
+      "id": "B-04",
+      "desc": "字典列数少于列名行（LX-E010）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\n",
+      "expect_lexicon_error": "LX-E010"
+    },
+    {
+      "id": "B-05",
+      "desc": "字典列名带前缀 #code（F-12 / R5-1）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1\n;;\n",
+      "lexicon": "#code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\n",
+      "expect_lexicon_error": "LX-E010"
+    },
+    {
+      "id": "B-06",
+      "desc": "^ 复用从未展开的代号（§9.1 步4 / LX-E011）",
+      "stream": "#LX1 dict=lexicon.tsv\n^R1\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\n",
+      "expect_error": true
+    },
+    {
+      "id": "B-07",
+      "desc": "缺 dict 头部（§3.3 / V-01）",
+      "stream": "#LX1\n@R1\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\n",
+      "expect_error": true
+    },
+    {
+      "id": "B-08",
+      "desc": "悬空引用：代号不在字典（LX-E002）",
+      "stream": "#LX1 dict=lexicon.tsv\n@NOPE\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\n",
+      "expect_error": true
+    },
+    {
+      "id": "B-09",
+      "desc": "未声明模态符（§3.3 / LX-E006：须在 mods 声明）",
+      "stream": "#LX1 dict=lexicon.tsv\n-@R1\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\n",
+      "expect_error": true
+    },
+    {
+      "id": "B-10",
+      "desc": "小写起始代号非法（§3.1 L-3）",
+      "stream": "#LX1 dict=lexicon.tsv\n@r1\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\n",
+      "expect_error": true
+    },
+    {
+      "id": "B-11",
+      "desc": "尾部连字符代号非法（§6.1 非法示例）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R-\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\n",
+      "expect_error": true
+    },
+    {
+      "id": "B-12",
+      "desc": "裸字面量含空格必须界定（L-6 / A-06 的反面）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1>taskkill /F\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\n",
+      "expect_error": true
+    },
+    {
+      "id": "B-13",
+      "desc": "非 ASCII 出现在符号串（L-1 / LX-E005）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1>中文\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\n",
+      "expect_error": true
+    },
+    {
+      "id": "B-14",
+      "desc": "字典代号重复（LX-E004）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\nR1\tr1b\tm1b\t.=\td.md\t\t\n",
+      "expect_lexicon_error": "LX-E004"
+    },
+    {
+      "id": "B-15",
+      "desc": "fidelity=.! 但 loss 缺失（LX-E007）",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.!\td.md\t\t\n",
+      "expect_lexicon_error": "LX-E007"
+    },
+    {
+      "id": "B-16",
+      "desc": "非 ASCII 代号（§3.1 code 产生式）",
+      "stream": "#LX1 dict=lexicon.tsv\n@红1\n;;\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\n",
+      "expect_error": true
+    }
+  ]
+}

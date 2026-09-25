@@ -1,0 +1,15 @@
+code	term	meaning	fidelity	detail_path	match	loss	rev
+CMPR	Compression	压缩（泛指：提示压缩 / 上下文压缩）	.~	docs/02_调研报告.md	compress		rev-cmpr-1
+CPROMPT	CompactPrompt	同源工作：缩写字典但内嵌于 prompt 内	.~	docs/02_调研报告.md			rev-cprompt-1
+LL	LLMLingua	提示压缩方法（token 级丢弃，有损）	.~	docs/02_调研报告.md			rev-ll-1
+LLL	LongLLMLingua	LLMLingua 的长上下文变体	.~	docs/02_调研报告.md			rev-lll-1
+CPZIP	CodePromptZip	代码域的提示压缩工作	.~	docs/02_调研报告.md			rev-cpzip-1
+ACL	aclanthology	论文来源域名（ACL Anthology）	.~	docs/02_调研报告.md			rev-acl-1
+ENG	Engineering	提示工程（Prompt Engineering）	.~	docs/02_调研报告.md	engineering		rev-eng-1
+DICT	Dictionary	字典：代号到含义的映射表	.~	docs/05_引索符系统规范.md	dictionary		rev-dict-1
+STOP	stopwords	停用词（文本域 L2 的删除对象）	.~	docs/04_三级概括法规范.md			rev-stop-1
+MOD	modality	模态符（§4.3）	.~	docs/05_引索符系统规范.md			rev-mod-1
+REL	relation	关系符（§4.4）	.~	docs/05_引索符系统规范.md			rev-rel-1
+FID	fidelity	保真度后缀（§4.5）	.~	docs/05_引索符系统规范.md			rev-fid-1
+TASK	taskkill	强杀进程命令（反面教材之一）	.~	docs/03_失效模式.md			rev-task-1
+ENC	Encoding	编码（§7 八步）	.~	docs/05_引索符系统规范.md			rev-enc-1

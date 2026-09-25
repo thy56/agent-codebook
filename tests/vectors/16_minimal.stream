@@ -1,0 +1,3 @@
+#LX1 dict=lexicon.tsv mods=-!
+-@R1|-@R2|-@R3
+;;

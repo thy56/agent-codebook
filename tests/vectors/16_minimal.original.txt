@@ -1,0 +1,3 @@
+红线1：绝不用 taskkill /F 强杀网关，会跳过 WAL 归并。
+红线2：绝不设 ALLOW_MULTI_GATEWAY，多开互抢端口会触发断路器。
+红线3：重启用 gateway restart，别用 stop+start 叠加。
