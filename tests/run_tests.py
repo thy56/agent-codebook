@@ -155,11 +155,19 @@ def test_section16_roundtrip() -> None:
         require(not m.startswith("@"), f"展开结果中不得残留 `@`：{m!r}（ND-3）")
 
     # 原文要素零丢失：三条规则的关键词必须分别落在对应含义里
-    keys = (("taskkill", "R1"), ("ALLOW_MULTI_GATEWAY", "R2"), ("gateway restart", "R3"))
+    keys = (("禁止强制终止", "R1"), ("禁止同时运行", "R2"), ("禁止先停后起", "R3"))
     for kw, code in keys:
         require(kw in lex.get(code).meaning, f"{code} 的含义未保留要素 {kw!r}")
     require(len(original.strip().splitlines()) == 3, "原文应有 3 行")
-    require(round(118 / 45, 2) == 2.62, "§16.4 比值应为 2.62:1")
+    # §16.1/§16.4：长度与比值**必须从文件实测**。
+    # 口径 = 各行长度之和（不含换行），与 §16.2「45 字符」一致。
+    # 注意：绝不写成 `round(118 / 45, 2) == 2.62` —— 那是常量比常量，恒真、测不到任何东西。
+    orig_len = sum(len(ln) for ln in original.rstrip("\n").split("\n"))
+    strm_len = sum(len(ln) for ln in stream_text.rstrip("\n").split("\n"))
+    require(orig_len == 118, f"§16.1 原文应为 118 字符（不含换行），实为 {orig_len}")
+    require(strm_len == 45, f"§16.2 符号串应为 45 字符（不含换行），实为 {strm_len}")
+    ratio = round(orig_len / strm_len, 2)
+    require(ratio == 2.62, f"§16.4 比值应为 2.62:1，实为 {ratio}:1")
 
     # 校验层：全量 + 最小集都应通过（除 LX-W001 —— §16 自身声明了未用的 `!`）
     rep = V.validate(stream_text, lex)
@@ -177,18 +185,18 @@ def test_section16_encode_roundtrip() -> None:
     """编码层往返：用 §16 的三条概念单元编码 → 校验 → 展开，要素零丢失。"""
     original = (VECTORS / "16_minimal.original.txt").read_text(encoding="utf-8")
     units = [
-        E.Unit(text="绝不用 taskkill /F 强杀网关，会跳过 WAL 归并。",
-               meaning="绝不用 taskkill /F 强杀网关（跳过 WAL）",
+        E.Unit(text="不可逆操作必须走优雅停止流程，禁止强制终止进程。",
+               meaning="不可逆操作必须走优雅停止流程，禁止强制终止进程",
                term="红线1", fidelity=".~", detail_path="docs/rules.md",
-               match="绝不用taskkill", modality="-", prefix="R"),
-        E.Unit(text="绝不设 ALLOW_MULTI_GATEWAY，多开互抢端口会触发断路器。",
-               meaning="绝不设 ALLOW_MULTI_GATEWAY（抢端口）",
+               match="禁止强制终止", modality="-", prefix="R"),
+        E.Unit(text="禁止同时运行多个实例，端口冲突会触发保护性停用。",
+               meaning="禁止同时运行多个实例，端口冲突会触发保护性停用",
                term="红线2", fidelity=".~", detail_path="docs/rules.md",
-               match="绝不设ALLOW_MULTI", modality="-", prefix="R"),
-        E.Unit(text="重启用 gateway restart，别用 stop+start 叠加。",
-               meaning="重启用 gateway restart，勿 stop+start",
+               match="禁止同时运行", modality="-", prefix="R"),
+        E.Unit(text="重启必须使用统一的命令入口，禁止先停后起叠加。",
+               meaning="重启必须使用统一的命令入口，禁止先停后起叠加",
                term="红线3", fidelity=".~", detail_path="docs/rules.md",
-               match="重启用gateway", modality="-", prefix="R"),
+               match="禁止先停后起", modality="-", prefix="R"),
     ]
     res = E.encode(units, original, dictionary_name="lexicon.tsv")
     require(res.encoded, f"编码应成功；errors={res.errors} warnings={res.warnings}")
@@ -419,11 +427,11 @@ def test_positive_specific_semantics() -> None:
     require(isinstance(kv[0], V.KeyValue) and kv[0].key == "state" and kv[0].value == "active",
             f"应为 KeyValue(state, active)，实为 {kv[0]!r}")
 
-    # 界定字面量："taskkill /F"
-    st4 = V.parse_stream('#LX1 dict=lexicon.tsv mods=+~ fid=yes\n@R1>"taskkill /F";;')
+    # 界定字面量："force stop"
+    st4 = V.parse_stream('#LX1 dict=lexicon.tsv mods=+~ fid=yes\n@R1>"force stop";;')
     lit = st4.units[0].terms[1].atom
-    require(isinstance(lit, V.Literal) and lit.quoted and lit.value == "taskkill /F",
-            f"应为界定字面量 'taskkill /F'，实为 {lit!r}")
+    require(isinstance(lit, V.Literal) and lit.quoted and lit.value == "force stop",
+            f"应为界定字面量 'force stop'，实为 {lit!r}")
 
     # 路径裸写：mem/rules/rl.md（/ 不是关系符）
     st5 = V.parse_stream("#LX1 dict=lexicon.tsv mods=+~ fid=yes\n@R1>mem/rules/rl.md;;")
@@ -635,8 +643,8 @@ def test_escaping_roundtrip() -> None:
     one = LX.split_aliases(LX.escape_field("a;b", is_match=True))   # 一个含 `;` 的别名
     require(one == ("a;b",),
             f"`\\;` 应还原为字面 `;` 且不切分，实为 {one}")
-    mixed = LX.split_aliases("绝不用taskkill\;x")
-    require(mixed == ("绝不用taskkill;x",),
+    mixed = LX.split_aliases("禁止强制终止\;x")
+    require(mixed == ("禁止强制终止;x",),
             f"转义分号应还原为字面 `;` 且不切分，实为 {mixed}")
     # 写入 → 读回闭环：两个别名往返不变
     joined = ";".join(("甲", "乙;丙"))
@@ -711,9 +719,9 @@ def test_encode_reuses_existing_code() -> None:
     """§7.1 步2：查重（大小写敏感）—— 有旧代号必须复用，**禁止**新建（P-6）。"""
     existing = LX.load(VECTORS / "16_minimal.lexicon.tsv")
     res = E.encode(
-        [E.Unit(text="绝不用taskkill", meaning="（新写法）", term="红线1",
+        [E.Unit(text="禁止强制终止", meaning="（新写法）", term="红线1",
                 fidelity=".~", detail_path="docs/rules.md", modality="-")],
-        "绝不用taskkill，会跳过 WAL 归并，绝不能用强杀这种方式处理网关进程。" * 2,
+        "禁止强制终止，必须走优雅停止流程并完成收尾清点，这条规则需要足够长。" * 2,
         dictionary_name="lexicon.tsv", existing=existing, on_negative="warn",
     )
     require(len(res.lexicon.entries) == 3,
@@ -724,8 +732,8 @@ def test_encode_reuses_existing_code() -> None:
 
 def test_encode_header_rules() -> None:
     """§3.3 / §6.2：含模态符必须声明 mods；用类别前缀必须声明 ns；头部 ≤120。"""
-    original = "重启用 gateway restart，别用 stop+start 叠加，这条规则需要足够长。" * 2
-    res = E.encode([E.Unit(text=original, meaning="重启用 gateway restart",
+    original = "重启必须使用统一的命令入口，禁止先停后起叠加，这条规则需要足够长。" * 2
+    res = E.encode([E.Unit(text=original, meaning="重启必须使用统一的命令入口",
                            term="红线3", fidelity=".~", detail_path="docs/rules.md",
                            modality="-", prefix="R")],
                    original, dictionary_name="lexicon.tsv")
@@ -734,7 +742,7 @@ def test_encode_header_rules() -> None:
     require("ns=" in res.header, f"用前缀必须声明 ns（§3.3/§6.2）：{res.header!r}")
     require(len(res.header) <= 120, f"头部应 ≤120：{len(res.header)}")
     # 纯序号（无前缀）可省略 ns（§6.2）
-    res2 = E.encode([E.Unit(text=original, meaning="重启用 gateway restart",
+    res2 = E.encode([E.Unit(text=original, meaning="重启必须使用统一的命令入口",
                             term="红线3", fidelity=".~", detail_path="docs/rules.md")],
                     original, dictionary_name="lexicon.tsv")
     require("ns=" not in res2.header, f"纯序号可省略 ns：{res2.header!r}")
@@ -852,11 +860,11 @@ def test_v03_paths() -> None:
 def test_encode_then_validate_file(tmp: Path) -> None:
     """文件级闭环：写盘 → validate_file（按头部定位字典）→ 展开。"""
     res = E.encode(
-        [E.Unit(text="绝不用 taskkill /F 强杀网关，会跳过 WAL 归并，必须优雅停止。" * 2,
-                meaning="绝不用 taskkill /F 强杀网关", term="红线1", fidelity=".~",
-                detail_path="docs/rules.md", match="绝不用taskkill", modality="-",
+        [E.Unit(text="不可逆操作必须走优雅停止流程，禁止使用强制终止进程的方式。" * 2,
+                meaning="不可逆操作必须走优雅停止流程", term="红线1", fidelity=".~",
+                detail_path="docs/rules.md", match="禁止强制终止", modality="-",
                 prefix="R")],
-        "绝不用 taskkill /F 强杀网关，会跳过 WAL 归并，必须优雅停止。" * 2,
+        "不可逆操作必须走优雅停止流程，禁止使用强制终止进程的方式。" * 2,
         dictionary_name="lexicon.tsv")
     require(res.encoded, f"应编码成功：{res.errors} {res.warnings}")
 
@@ -870,7 +878,7 @@ def test_encode_then_validate_file(tmp: Path) -> None:
                     f"{[d.message for d in rep.errors]}")
     exp = D.expand_file(tmp / "stream.lx")
     require(exp.ok and exp.meanings(), "文件级展开应有结果")
-    require_in("绝不用 taskkill /F 强杀网关", exp.meanings()[0], "展开含义")
+    require_in("不可逆操作必须走优雅停止流程", exp.meanings()[0], "展开含义")
 
     # 字典文件不存在 → LX-E003 而非空结果
     # 用 ASCII 文件名：非 ASCII 的 dict 路径会先被 L-1 拦下（那是另一条正确的拒绝）

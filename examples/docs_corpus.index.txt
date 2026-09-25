@@ -3,4 +3,4 @@
 > 本文件演示 §2.3「索引在内 / 字典在外」的常驻侧写法：
 > 正文只留一行**词名索引**，含义在 `docs_corpus.lexicon.tsv`（外置，不占常驻额度）。
 
-**词表（14）**：Compression、CompactPrompt、LLMLingua、LongLLMLingua、CodePromptZip、aclanthology、Engineering、Dictionary、stopwords、modality、relation、fidelity、taskkill、Encoding
+**词表（14）**：Compression、CompactPrompt、LLMLingua、LongLLMLingua、CodePromptZip、aclanthology、Engineering、Dictionary、stopwords、modality、relation、fidelity、terminate、Encoding

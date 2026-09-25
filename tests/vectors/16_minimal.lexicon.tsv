@@ -1,4 +1,4 @@
 code	term	meaning	fidelity	detail_path	match	loss
-R1	红线1	绝不用 taskkill /F 强杀网关（跳过 WAL）	.~	docs/rules.md	绝不用taskkill	
-R2	红线2	绝不设 ALLOW_MULTI_GATEWAY（抢端口）	.~	docs/rules.md	绝不设ALLOW_MULTI	
-R3	红线3	重启用 gateway restart，勿 stop+start	.~	docs/rules.md	重启用gateway	
+R1	红线1	不可逆操作必须走优雅停止流程，禁止强制终止进程	.~	docs/rules.md	禁止强制终止	
+R2	红线2	禁止同时运行多个实例，端口冲突会触发保护性停用	.~	docs/rules.md	禁止同时运行	
+R3	红线3	重启必须使用统一的命令入口，禁止先停后起叠加	.~	docs/rules.md	禁止先停后起	

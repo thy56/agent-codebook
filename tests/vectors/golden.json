@@ -6,14 +6,14 @@
       "id": "A-01",
       "desc": "§16 最小示例：3 条规则 → 3 个并列单元 + 收尾 ;;",
       "stream": "#LX1 dict=lexicon.tsv mods=-!\n-@R1|-@R2|-@R3\n;;\n",
-      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\t红线1\t绝不用 taskkill /F 强杀网关（跳过 WAL）\t.~\tdocs/rules.md\t绝不用taskkill\t\nR2\t红线2\t绝不设 ALLOW_MULTI_GATEWAY（抢端口）\t.~\tdocs/rules.md\t绝不设ALLOW_MULTI\t\nR3\t红线3\t重启用 gateway restart，勿 stop+start\t.~\tdocs/rules.md\t重启用gateway\t\n",
+      "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\t红线1\t不可逆操作必须走优雅停止流程，禁止强制终止进程\t.~\tdocs/rules.md\t禁止强制终止\t\nR2\t红线2\t禁止同时运行多个实例，端口冲突会触发保护性停用\t.~\tdocs/rules.md\t禁止同时运行\t\nR3\t红线3\t重启必须使用统一的命令入口，禁止先停后起叠加\t.~\tdocs/rules.md\t禁止先停后起\t\n",
       "expect_units": 3,
       "expect_terms": 3,
       "expect_errors": 0,
       "expand_contains": [
-        "taskkill",
-        "ALLOW_MULTI_GATEWAY",
-        "gateway restart"
+        "禁止强制终止",
+        "禁止同时运行",
+        "禁止先停后起"
       ]
     },
     {
@@ -55,7 +55,7 @@
     {
       "id": "A-06",
       "desc": "界定字面量：含空格必须用 \"...\"（L-6 / F-3）",
-      "stream": "#LX1 dict=lexicon.tsv\n@R1>\"taskkill /F\"\n;;\n",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1>\"force stop\"\n;;\n",
       "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\t含义1\t.=\td.md\t\t\n",
       "expect_errors": 0
     },
@@ -179,7 +179,7 @@
     {
       "id": "B-12",
       "desc": "裸字面量含空格必须界定（L-6 / A-06 的反面）",
-      "stream": "#LX1 dict=lexicon.tsv\n@R1>taskkill /F\n;;\n",
+      "stream": "#LX1 dict=lexicon.tsv\n@R1>force stop\n;;\n",
       "lexicon": "code\tterm\tmeaning\tfidelity\tdetail_path\tmatch\tloss\nR1\tr1\tm1\t.=\td.md\t\t\n",
       "expect_error": true
     },

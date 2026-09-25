@@ -60,10 +60,10 @@
     ]
   },
   {
-    "name": "含空格未界定 @R1>taskkill /F",
+    "name": "含空格未界定 @R1>force stop",
     "ref": "06 A-④ / L-6 / F-3",
     "kind": "validate",
-    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@R1>taskkill /F;;",
+    "stream": "#LX1 dict=lexicon.tsv mods=-!\n@R1>force stop;;",
     "lexicon": "shared.lexicon.tsv",
     "expect": [
       "LX-E005"

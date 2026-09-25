@@ -30,9 +30,9 @@
     "lexicon": "shared.lexicon.tsv"
   },
   {
-    "name": "界定字面量 \"taskkill /F\"（含空格必须界定）",
+    "name": "界定字面量 \"force stop\"（含空格必须界定）",
     "ref": "§3.4 / L-6 / 06 F-3",
-    "stream": "#LX1 dict=lexicon.tsv mods=+~ fid=yes\n@R1>\"taskkill /F\";;",
+    "stream": "#LX1 dict=lexicon.tsv mods=+~ fid=yes\n@R1>\"force stop\";;",
     "lexicon": "shared.lexicon.tsv"
   },
   {

@@ -11,5 +11,5 @@ STOP	stopwords	停用词（文本域 L2 的删除对象）	.~	docs/04_三级概�
 MOD	modality	模态符（§4.3）	.~	docs/05_引索符系统规范.md			rev-mod-1
 REL	relation	关系符（§4.4）	.~	docs/05_引索符系统规范.md			rev-rel-1
 FID	fidelity	保真度后缀（§4.5）	.~	docs/05_引索符系统规范.md			rev-fid-1
-TASK	taskkill	强杀进程命令（反面教材之一）	.~	docs/03_失效模式.md			rev-task-1
+TERM	terminate	进程终止操作（优雅停止与强制终止的对照）	.~	docs/03_失效模式.md			rev-term-1
 ENC	Encoding	编码（§7 八步）	.~	docs/05_引索符系统规范.md			rev-enc-1
