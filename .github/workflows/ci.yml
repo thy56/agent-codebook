@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Test suite
+        run: python tests/run_tests.py
+
+      - name: Audit self-test (R1-R6)
+        run: python tools/lexicon_audit.py --self-test
+
+      - name: Benchmark (R7)
+        run: python tools/benchmark.py docs --dict examples/docs_corpus.lexicon.tsv
+
+      - name: Dependency check (stdlib only)
+        if: matrix.python-version == '3.12'
+        run: |
+          python - <<'PY'
+          import ast, pathlib, sys
+          std = set(getattr(sys, "stdlib_module_names", ()))
+          if not std:
+              print("stdlib_module_names unavailable; skipping")
+              sys.exit(0)
+          local = {p.stem for p in pathlib.Path('.').rglob('*.py')}
+          bad = set()
+          for p in pathlib.Path('.').rglob('*.py'):
+              if '.git' in p.parts:
+                  continue
+              for node in ast.walk(ast.parse(p.read_text(encoding='utf-8'))):
+                  if isinstance(node, ast.Import):
+                      bad |= {a.name.split('.')[0] for a in node.names}
+                  elif isinstance(node, ast.ImportFrom) and node.module:
+                      bad.add(node.module.split('.')[0])
+          ext = sorted(m for m in bad if m not in std and m not in local)
+          print('non-stdlib imports:', ext or 'none')
+          sys.exit(1 if ext else 0)
+          PY
